@@ -32,6 +32,7 @@ class ClientServerProtocol(asyncio.Protocol):
                             return "ok\n\n"
                     metrics_dict[key].append((timestamp,value))
                 return "ok\n\n"
+            
             except Exception:
                 return "error\nwrong command\n\n"
 
@@ -47,6 +48,7 @@ class ClientServerProtocol(asyncio.Protocol):
                         except IndexError:
                             return "Index error"
                 return to_send + '\n'
+            
             else:
                 metrics_list = metrics_dict.get(key)
                 if metrics_list is None:
@@ -66,12 +68,10 @@ def run_server(host, port):
     loop = asyncio.get_event_loop()
     coro = loop.create_server(ClientServerProtocol, host, port)
     server = loop.run_until_complete(coro)
-
     try:
         loop.run_forever()
     except KeyboardInterrupt:
         pass
-
     server.close()
     loop.run_until_complete(server.wait_closed())
     loop.close()
